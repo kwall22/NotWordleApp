@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Wordle</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div id="app">
+            <h1 id="title">Not Wordle</h1>
+            <h2 v-if="badGuess && !winStatus" :style="{color: '#fc3131', marginLeft: '90px'}" >{{ errorMessage }}</h2>
+            <div id="board-div" v-if="!winStatus && (guessesLeft != 0)">
+                <h2 id="guess-count" >Guesses Left: {{ guessesLeft }}</h2>
+                <h2 v-if="!getWhoseTurn()" :style="{color: '#708c6a'}" >Your Turn</h2>
+                <h2 v-if="getWhoseTurn()" :style="{color: 'grey'}" >Teammates Turn</h2>
+                <div id="grid-div">
+                    <div v-for="(guess, guessIndex) in maxGuesses" :key="guessIndex" :class="{ 'current-player-row': isCurrentPlayerRow(guessIndex) }" class="row">
+                        <input 
+                            v-for="(letter, letterIndex) in maxLetters" 
+                            :key="letterIndex" 
+                            type="text" 
+                            v-model="guesses[guessIndex][letterIndex]" 
+                            :id="'word' + (guessIndex + 1) + '-letter' + (letterIndex + 1)"
+                            :disabled="isGuessDisabled(guessIndex)"
+                            :class="{ 'disabled': isGuessDisabled(guessIndex)}"
+                            :style="{ backgroundColor: guessColors[guessIndex][letterIndex] }"
+                            maxlength="1"
+                            @keydown="moveFocusToNextOrPreviousInput($event, letterIndex + guessIndex * maxLetters)"
+                            @keyup.enter="submitGuess"
+                        >
+                    </div>
+                </div>
+            </div>
+            <button v-if="!winStatus && (guessesLeft != 0)" id="send-guess-button" @click="submitGuess" >send</button>
+            <div v-if="winStatus">
+                <h1>charged with cheating on NYT</h1>
+                <img id="winner-image" src="images/IMG_3256.jpg">
+            </div>
+            <div v-if="guessesLeft == 0" >
+                <h1 :style="{textAlign: 'center'}"> NO MORE GUESSES, LOSER</h1>
+                <img id="loser-image" src="images/loser.JPG">
+            </div>
+        </div>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="app.js"></script>
+    </body>
+</html>
